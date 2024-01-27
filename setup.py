@@ -24,10 +24,10 @@ if sys.argv[-1] == 'publish':
     # print("You probably want to also tag the version now:")
     # print("  git tag -a %s -m 'version %s'" % (version, version))
     # print("  git push --tags")
-    # shutil.rmtree('dist')
-    # shutil.rmtree('build')
-    # shutil.rmtree('dock_craftsman.egg-info')
-    # sys.exit()
+    shutil.rmtree('dist')
+    shutil.rmtree('build')
+    shutil.rmtree('dock_craftsman.egg-info')
+    sys.exit()
     
 def read(f):
     with open(f, 'r', encoding='utf-8') as file:
