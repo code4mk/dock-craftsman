@@ -80,6 +80,19 @@ class DockerfileGenerator:
         self.copy(f'./{directory}/{path}', destination)
 
         return self
+    
+    def copy_text(self, content, temp_file, destination):
+        directory = the_temp_dir
+        path = temp_file
+
+        # Write the supervisord configuration content to the file
+        with open(f"{directory}/{path}", "w") as file:
+            file.write(content)
+
+        # Optionally, you can copy the file (assuming self.copy is defined elsewhere)
+        self.copy(f'./{directory}/{path}', destination)
+
+        return self
 
 
 
