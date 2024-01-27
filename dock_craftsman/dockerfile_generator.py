@@ -1,9 +1,11 @@
 import os
+from .utils import create_temp_directory, the_temp_dir
 
 class DockerfileGenerator:
     def __init__(self):
         self.instructions = []
         self.current_stage = None
+        create_temp_directory()
 
     def from_(self, base_image):
         if self.current_stage:
@@ -67,14 +69,9 @@ class DockerfileGenerator:
     
 
     def set_supervisord(self, supervisord_config_content, destination='/etc/supervisor/conf.d/supervisord.conf'):
-        from .utils import the_temp_dir
         directory = the_temp_dir
         path = "supervisord.conf"
-        
-        # Create the directory if it doesn't exist
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        
+
         # Write the supervisord configuration content to the file
         with open(f"{directory}/{path}", "w") as file:
             file.write(supervisord_config_content)

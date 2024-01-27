@@ -19,3 +19,8 @@ def remove_temp_directory(directory_path = the_temp_dir):
             print(f"Error removing directory '{directory_path}': {e}")
     else:
         print(f"Directory '{directory_path}' does not exist.")
+        
+
+def create_temp_directory(directory_path = the_temp_dir):        
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path)
