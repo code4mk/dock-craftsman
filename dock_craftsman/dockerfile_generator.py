@@ -1,3 +1,5 @@
+import os
+
 class DockerfileGenerator:
     def __init__(self):
         self.instructions = []
@@ -62,6 +64,26 @@ class DockerfileGenerator:
             packages = [packages]
         self.instructions.append(f'RUN apt-get update && apt-get -y install {" ".join(packages)} --no-install-recommends\n')
         return self
+    
+
+    def set_supervisord(self, supervisord_config_content, destination='/etc/supervisor/conf.d/supervisord.conf'):
+        from .utils import the_temp_dir
+        directory = the_temp_dir
+        path = "supervisord.conf"
+        
+        # Create the directory if it doesn't exist
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        
+        # Write the supervisord configuration content to the file
+        with open(f"{directory}/{path}", "w") as file:
+            file.write(supervisord_config_content)
+
+        # Optionally, you can copy the file (assuming self.copy is defined elsewhere)
+        self.copy(f'./{directory}/{path}', destination)
+
+        return self
+
 
 
     def get_content(self):

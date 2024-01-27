@@ -80,8 +80,8 @@ class DockerImageBuilder:
             'cache_from': self.cache_from,
             'extra_hosts': self.extra_hosts,
             'path': self.path,
-            'pull': True,
-            'nocache': True,
+            'pull': False,
+            'nocache': False,
         }
         
         if self.dockerfile_content is not None:
@@ -118,6 +118,10 @@ class DockerImageBuilder:
                         console.print(Text(f'=> {cached_msg} {modified_string}', style="blue"))
                         is_using_cache = False
                     elif "Successfully built" in step_output:
+                        
+                        from .utils import remove_temp_directory, the_temp_dir
+                        remove_temp_directory(the_temp_dir)
+                        
                         console.print(
                             Panel(
                                 f"Build Successful\n\n"
