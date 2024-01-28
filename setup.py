@@ -46,7 +46,7 @@ setup(
     keywords=['docker'],
     
     # Package configuration
-    packages=find_packages(exclude=['tests*']),
+    packages=find_packages(exclude=['tests*', 'template*']),
     
     # Dependencies
     install_requires=[
