@@ -1,9 +1,10 @@
 # supervisord
 from dock_craftsman.supervisor.visord import SupervisordConfig
-config = SupervisordConfig(loglevel='debug', nodaemon=True)
+config = SupervisordConfig(loglevel='info', nodaemon=True)
 config.add_program('nginx').command('/usr/sbin/nginx -g "daemon off;"').stderr_logfile('/var/log/nginx/error.log').stdout_logfile('/var/log/nginx/access.log')
-config.add_program('drf_friend').command('pipenv run python manage.py runserver 0.0.0.0:8000').directory('/var/www/app').stderr_logfile('/var/log/django.log')
-
+config.add_program('django').command('pipenv run python manage.py runserver 0.0.0.0:8000').directory('/var/www/app').stdout_logfile('/var/log/django.log').redirect_stderr(True)
+#config.add_program('celery-beat').command('pipenv run celery -A kintaro beat --loglevel=info').directory('/var/www/app').stderr_logfile('/var/log/celery-beat.err.log').stdout_logfile('/var/log/celery-beat.out.log')
+#config.add_program('celery-worker').command('pipenv run celery -A kintaro worker --loglevel=info').directory('/var/www/app').stderr_logfile('/var/log/celery-worker.err.log').stdout_logfile('/var/log/celery-worker.out.log')
 supervisord_config_content = config.generate_config()
 
 #nginx
@@ -38,12 +39,9 @@ dockerfile.apt_install('supervisor')
 dockerfile.apt_install('nginx')
 
 # Copy Nginx configuration to the container
-#dockerfile.copy('./docker/config/nginx/app.conf', '/etc/nginx/sites-enabled/app.conf')
-
 dockerfile.copy_text(nginx_config,'nginx-app.conf', '/etc/nginx/sites-enabled/app.conf')
 
 # Copy Supervisor configuration to the container
-# dockerfile.copy('./docker/config/supervisor/supervisord.conf', '/etc/supervisor/conf.d/supervisord.conf')
 dockerfile.set_supervisord(supervisord_config_content)
 
 # Create the log and run directories for supervisord
