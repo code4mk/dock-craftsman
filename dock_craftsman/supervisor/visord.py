@@ -21,7 +21,7 @@ class Program:
         self.directory_val = None
         self.autostart_val = True
         self.autorestart_val = True
-        self.redirect_stderr_val = True
+        self.redirect_stderr_val = None
         self.stderr_logfile_val = None
         self.stdout_logfile_val = None
 
@@ -60,7 +60,9 @@ class Program:
             config += f'directory={self.directory_val}\n'
         config += f'autostart={str(self.autostart_val).lower()}\n'
         config += f'autorestart={str(self.autorestart_val).lower()}\n'
-        config += f'redirect_stderr={str(self.redirect_stderr_val).lower()}\n'
+        
+        if self.redirect_stderr_val:
+            config += f'redirect_stderr={str(self.redirect_stderr_val).lower()}\n'
         if self.stderr_logfile_val:
             config += f'stderr_logfile={self.stderr_logfile_val}\n'
         if self.stdout_logfile_val:
