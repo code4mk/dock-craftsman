@@ -36,7 +36,7 @@ def read(f):
 setup(
     # Package metadata
     name='dock-craftsman',
-    version='0.0.1',
+    version='0.0.2',
     url='https://dock-craftsman.code4mk.org/',
     author='Mostafa Kamal',
     author_email='hiremostafa@gmail.com',
@@ -50,7 +50,8 @@ setup(
     
     # Dependencies
     install_requires=[
-        
+        'docker==7.0.0',
+        'rich==13.7.0',
     ],
 
     # Classifiers
