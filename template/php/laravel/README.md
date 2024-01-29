@@ -4,7 +4,7 @@
 # create virtual env
 python3 -m venv .dock_craftsman
 # activate virtual env
-source dock_craftsman/bin/activate
+source .dock_craftsman/bin/activate
 ```
 
 # install pipy package 🚀
