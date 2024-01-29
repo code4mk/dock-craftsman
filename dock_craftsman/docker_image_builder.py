@@ -68,6 +68,10 @@ class DockerImageBuilder:
     def build(self):
         if self.client_error:
             return False
+        
+        import time
+        start_time = time.time()  # Record the start time
+        console = Console()
 
         console = Console()
 
@@ -118,20 +122,6 @@ class DockerImageBuilder:
                         console.print(Text(f'=> {cached_msg} {modified_string}', style="blue"))
                         is_using_cache = False
                     elif "Successfully built" in step_output:
-                        
-                        from .utils import remove_temp_directory, the_temp_dir
-                        remove_temp_directory(the_temp_dir)
-                        
-                        console.print(
-                            Panel(
-                                f"Build Successful\n\n"
-                                f"Image Name: {self.image_name}\n"
-                                f"Image Tag: {self.tags or 'latest'}",
-                                title="Build Status",
-                                style="green"
-                            )
-                        )
-
                         # Try to extract the image ID from the step output
                         parts = step_output.split()
                         if len(parts) == 3:
@@ -140,7 +130,24 @@ class DockerImageBuilder:
                     else:
                         console.print(Text(step_output, style="yellow"))
             if image_id:
+                
+                from .utils import remove_temp_directory, the_temp_dir
+                remove_temp_directory(the_temp_dir)
+                        
+                console.print(
+                    Panel(
+                        f"Build Successful\n\n"
+                        f"Image Name: {self.image_name}\n"
+                        f"Image Tag: {self.tags or 'latest'}",
+                        title="Build Status",
+                        style="green"
+                    )
+                )
                 # console.print(f"Image ID: {image_id}")
+                end_time = time.time()
+                total_time = end_time - start_time
+                total_time_minutes = total_time / 60
+                console.print(f"Total Execution Time: {total_time_minutes:.2f} minutes")
                 return True
             else:
                 console.print(Panel("Build failed: Unable to retrieve image ID", title="Build Failed", style="red"))
