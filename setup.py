@@ -36,7 +36,7 @@ def read(f):
 setup(
     # Package metadata
     name='dock-craftsman',
-    version='0.0.5',
+    version='0.0.6',
     url='https://dock-craftsman.code4mk.org/',
     author='Mostafa Kamal',
     author_email='hiremostafa@gmail.com',

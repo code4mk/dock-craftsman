@@ -127,6 +127,8 @@ class DockerImageBuilder:
                         if len(parts) == 3:
                             image_id = parts[2]
                             break
+                    elif "[Warning] The requested image's platform (linux/amd64)" in step_output:
+                        pass
                     else:
                         console.print(Text(step_output, style="yellow"))
             if image_id:
