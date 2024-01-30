@@ -11,11 +11,12 @@ class DockerManager:
         # Initialize container_info_list
         self.container_info_list = []
 
-    def container(self, image_tag, ports=None, detach=False, tty=False, env=None, pull_from_docker_hub=False):
+    def container(self, image_tag, name=None, ports=None, detach=False, tty=False, env=None, pull_from_docker_hub=False):
         """
         Prepare information for a Docker container without running it.
 
         :param image_tag: The tag of the Docker image.
+        :param name: The name of the Docker container.
         :param ports: A string specifying port mappings in the format 'host:container'.
         :param detach: Whether to run the container in the background.
         :param tty: Allocate a pseudo-TTY and run the container in interactive mode.
@@ -56,6 +57,7 @@ class DockerManager:
         # Save container information to container_info_list
         container_info = {
             'image': image_tag,
+            'name': name,  # Added name parameter
             'run_options': run_options,
         }
         self.container_info_list.append(container_info)
@@ -76,19 +78,20 @@ class DockerManager:
                 if docker_network:
                     run_options['network'] = network_name  # Connect the container to the specified network
 
-                # Run the container
+                # Run the container with the specified name
                 container = self.client.containers.run(
                     container_info['image'],
+                    name=container_info['name'],  # Added name parameter
                     **run_options,
                 )
 
                 # Save container information to container_info_list
                 container_info['id'] = container.id[:12]
 
-                print(f"Starting container with ID {container_info['id']}...")
+                print(f"Starting container with ID {container_info['id']} and name {container_info['name']}...")
                 # Save container information to container_info_list
                 self.save_container_info(container)
-                print(f"Container with ID {container_info['id']} started.")
+                print(f"Container with ID {container_info['id']} and name {container_info['name']} started.")
             except docker.errors.NotFound:
                 print(f"Container with image {container_info['image']} not found.")
             except APIError as e:
