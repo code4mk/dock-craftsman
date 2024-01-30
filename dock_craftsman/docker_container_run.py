@@ -2,6 +2,7 @@ import docker
 import json
 import os
 from docker.errors import APIError, ImageNotFound
+from tqdm import tqdm
 
 class DockerContainerRun:
     def __init__(self):
@@ -27,21 +28,12 @@ class DockerContainerRun:
             docker_network = self.get_or_create_network(network_name, driver='bridge')
             
             if pull_from_docker_hub:
-              # Split image_tag into image name and tag
-              image_name, tag = image_tag.split(':')
-              print(f"Pulling image {image_name} with tag {tag} from Docker Hub...")
-              import requests
+                # Split image_tag into image name and tag
+                image_name, tag = image_tag.split(':')
+                print(f"Pulling image {image_name} with tag {tag} from Docker Hub...")
+                image = self.client.images.pull(image_name, tag=tag)
 
-              response = requests.get(
-                  f"https://registry.hub.docker.com/v2/repositories/library/{image_name}/tags/{tag}/",
-                  stream=True
-              )
-
-              for chunk in response.iter_content(chunk_size=1024):
-                  if chunk:
-                    print(str(chunk))
-                      # pull_status = json.loads(chunk.decode('utf-8'))
-                      # print(f"Status: {pull_status.get('status', '')}, Progress: {pull_status.get('progress', '')}")
+              
             # Build the container run options
             run_options = {
                 'detach': detach,
@@ -160,10 +152,8 @@ class DockerContainerRun:
         """
         try:
             docker_network = self.client.networks.get(name)
-            print(f"Using existing Docker network: {name}")
             return docker_network
         except docker.errors.NotFound:
-            print(f"Docker network not found: {name}. Creating the network...")
             return self.create_network(name, driver)
 
     def create_network(self, name, driver='bridge'):
@@ -177,7 +167,6 @@ class DockerContainerRun:
         try:
             print(f"Creating Docker network: {name}")
             docker_network = self.client.networks.create(name, driver=driver)
-            print(f"Network created successfully: {docker_network.id}")
             return docker_network
         except APIError as e:
             print(f"Error: API error during network creation.")
