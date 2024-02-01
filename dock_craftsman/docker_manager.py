@@ -5,9 +5,10 @@ from docker.errors import APIError, ImageNotFound
 from tqdm import tqdm
 
 class DockerManager:
-    def __init__(self):
+    def __init__(self, docker_socket="unix://var/run/docker.sock"):
         # Create a Docker client
-        self.client = docker.from_env()
+        # self.client = docker.from_env()
+        self.client = docker.DockerClient(base_url=docker_socket)
         # Initialize container_info_list
         self.container_info_list = []
 

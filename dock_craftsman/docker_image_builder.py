@@ -5,7 +5,7 @@ from rich.panel import Panel
 from .utils import generate_unique_docker_image_name
 
 class DockerImageBuilder:
-    def __init__(self):
+    def __init__(self, docker_socket="unix://var/run/docker.sock"):
         self.image_name = generate_unique_docker_image_name()
         self.dockerfile_content = None
         self.dockerfile = None
@@ -18,7 +18,8 @@ class DockerImageBuilder:
         self.client_error = False
         
         try:
-            self.docker_client = docker.from_env()
+            # self.docker_client = docker.from_env()
+            self.client = docker.DockerClient(base_url=docker_socket)
         except Exception as e:
             console = Console()
             console.print(Panel(f"{e}", title="Initialization Error", style="red"))
