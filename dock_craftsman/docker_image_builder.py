@@ -19,7 +19,7 @@ class DockerImageBuilder:
         
         try:
             # self.docker_client = docker.from_env()
-            self.client = docker.DockerClient(base_url=docker_socket)
+            self.docker_client = docker.DockerClient(base_url=docker_socket)
         except Exception as e:
             console = Console()
             console.print(Panel(f"{e}", title="Initialization Error", style="red"))
