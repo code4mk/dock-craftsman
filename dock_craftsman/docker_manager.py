@@ -62,8 +62,8 @@ class DockerManager:
 
         if volumes:
             # Convert volumes string to dictionary
-            source, destination = volumes.split(':')
-            volume_mapping = {destination: {'bind': source, 'mode': 'rw'}}
+            host_path, container_path = volumes.split(':')
+            volume_mapping = {host_path: {'bind': container_path, 'mode': 'rw'}}
             run_options['volumes'] = volume_mapping
 
         # Save container information to container_info_list
