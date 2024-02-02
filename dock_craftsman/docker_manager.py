@@ -15,7 +15,8 @@ class DockerManager:
         # Initialize container_info_list
         self.container_info_list = []
 
-    def container(self, image_tag, name=None, ports=None, detach=False, tty=False, env=None, pull_from_docker_hub=False):
+    def container(self, image_tag, name=None, ports=None, detach=False, tty=False, env=None, volumes=None,
+                  pull_from_docker_hub=False):
         """
         Prepare information for a Docker container without running it.
 
@@ -25,6 +26,7 @@ class DockerManager:
         :param detach: Whether to run the container in the background.
         :param tty: Allocate a pseudo-TTY and run the container in interactive mode.
         :param env: A list of dictionaries representing environment variables.
+        :param volumes: A string specifying volume mappings in the format 'host_path:container_path'.
         :param pull_from_docker_hub: Whether to pull the image from Docker Hub before running.
         :return: None
         """
@@ -58,6 +60,12 @@ class DockerManager:
             env_dict = {item['env_name']: item['value'] for item in env}
             run_options['environment'] = env_dict
 
+        if volumes:
+            # Convert volumes string to dictionary
+            source, destination = volumes.split(':')
+            volume_mapping = {destination: {'bind': source, 'mode': 'rw'}}
+            run_options['volumes'] = volume_mapping
+
         # Save container information to container_info_list
         container_info = {
             'image': image_tag,
@@ -65,7 +73,7 @@ class DockerManager:
             'run_options': run_options,
         }
         self.container_info_list.append(container_info)
-
+        
     def up(self):
         """
         Run the containers stored in container_info_list.
