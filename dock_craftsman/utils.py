@@ -1,6 +1,8 @@
 import uuid
 import os
 from datetime import datetime
+import os
+import stat
 
 the_temp_dir = "craftsman_temp"
 
@@ -21,6 +23,10 @@ def remove_temp_directory(directory_path = the_temp_dir):
         print(f"Directory '{directory_path}' does not exist.")
         
 
-def create_temp_directory(directory_path = the_temp_dir):        
-    if not os.path.exists(directory_path):
-        os.makedirs(directory_path)
+def create_temp_directory(directory_path=the_temp_dir):
+    try:
+        if not os.path.exists(directory_path):
+            os.makedirs(directory_path, mode=0o777)  # Set directory permissions to read, write, and execute for everyone
+            os.chmod(directory_path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # Set permissions using chmod
+    except Exception as e:
+        print(f"An error occurred while creating the temporary directory: {str(e)}")
