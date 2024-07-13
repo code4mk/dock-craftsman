@@ -47,21 +47,41 @@ class TheContainer:
         log_data =  container.logs().decode('utf-8')
         return log_data
 
-    def exec_cmd(self, container_id, *args):
+    def exec_cmd(self, container_id, workdir=None, *args):
         """
         Execute a command inside a running Docker container.
 
         :param container_id: The ID of the Docker container.
         :param args: The arguments for the command.
-        :return: The output of the command.
+        :param workdir: Optional. The working directory inside the container.
+        :return: An object with 'working_dir' and 'output' attributes.
         """
-        command = ["/bin/bash", "-c"] + list(args)
-        exec_id = self.client.api.exec_create(container_id, cmd=command)['Id']
-        exec_output = self.client.api.exec_start(exec_id)
-        result = exec_output.decode('utf-8')
-
-        return result
-      
+        # Prepare the command to change directory and execute user-provided command
+        if workdir:
+            full_command = f"cd {workdir} && {' && '.join(args)} && pwd"
+        else:
+            full_command = f"{' && '.join(args)} && pwd"
+        
+        # Execute the command in the container
+        exec_id = self.client.api.exec_create(container_id, cmd=["/bin/bash", "-c", full_command])
+        exec_output = self.client.api.exec_start(exec_id["Id"])
+        
+        # Decode the output and split by lines
+        result_lines = exec_output.decode('utf-8').splitlines()
+        
+        # Extract the last line as the current working directory
+        working_dir = result_lines[-1] if result_lines else ""
+        
+        # Join the remaining lines as the command execution result
+        output = "\n".join(result_lines[:-1]) if len(result_lines) > 1 else ""
+        
+        # Return an object with working_dir and output attributes
+        return {
+            'working_dir': working_dir,
+            'output': output
+        }
+    
+    
     def stop(self, container_ids):
         """
         Stop Docker containers.
