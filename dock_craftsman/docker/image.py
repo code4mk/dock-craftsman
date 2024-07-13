@@ -32,6 +32,9 @@ class TheImage:
 
             # Extract repository and tag or provide default values
             repo_tags = inspect_data['RepoTags']
+            if len(repo_tags) == 0:
+                continue
+            
             repository, tag = self.extract_repository_and_tag(repo_tags)
 
             image_info = {
@@ -40,7 +43,7 @@ class TheImage:
                 'tags': repo_tags,
                 'image_id': image_id,
                 'created': inspect_data['Created'],
-                'created_humonize': self.get_the_time(inspect_data['Created']),
+                # 'created_humonize': self.get_the_time(inspect_data['Created']),
                 'size': size_mb,
                 'platform': {
                     'os': inspect_data['Os'],
@@ -48,21 +51,19 @@ class TheImage:
                 },
                 'used': bool(used_container_info),
                 'used_running': used_running,
-                'status': status,
-                'used_container_info': used_container_info
+                'used_container_info': used_container_info,
+                'raw_data': inspect_data,
             }
 
             # Apply query filters
             if query:
                 if 'name' in query and query['name'] not in repository:
                     continue
-                if 'status' in query and query['status'] != 'all' and query['status'] != status:
-                    continue
-
+                
             images.append(image_info)
 
-        # Sort images based on date
-        images.sort(key=lambda x: x['created'], reverse=query.get('date_sort') == 'desc' if query and 'date_sort' in query else False)
+        #Sort images based on date
+        #images.sort(key=lambda x: x['created'], reverse=query.get('date_sort') == 'desc' if query and 'date_sort' in query else False)
 
         return images
 
